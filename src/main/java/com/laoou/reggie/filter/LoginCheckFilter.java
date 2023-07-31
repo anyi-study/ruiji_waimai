@@ -1,6 +1,7 @@
 package com.laoou.reggie.filter;
 
 import com.alibaba.fastjson.JSON;
+import com.laoou.reggie.common.BaseContext;
 import com.laoou.reggie.common.R;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.AntPathMatcher;
@@ -30,7 +31,8 @@ public class LoginCheckFilter implements Filter {
                 "/employee/login",
                 "/employee/logout",
                 "/backend/**",
-                "/front/**"
+                "/front/**",
+                "/common/**"
         };
 //2、判断本次请求是否需要处理
         boolean check = check(urls, requestURI);
@@ -41,9 +43,12 @@ public class LoginCheckFilter implements Filter {
             return;
         }
 //4、判断登录状态，如果已登录，则刚直接放行
-        if(request.getSession().getAttribute("employee" )!=null){
-            log.info("用户已登录,用户id:{}",request.getSession().getAttribute("employee"));
-            filterChain.doFilter(request,response);
+        if(request.getSession().getAttribute("employee" )!=null) {
+            log.info("用户已登录,用户id:{}", request.getSession().getAttribute("employee"));
+
+            Long empId = (Long) request.getSession().getAttribute("employee");
+            BaseContext.setCurrentId(empId);
+            filterChain.doFilter(request, response);
             return;
         }
 //5、如果未登录则返回未登录结果
