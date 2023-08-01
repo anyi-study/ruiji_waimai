@@ -19,7 +19,7 @@
     </properties>
     <dependencies>
 
-        <!--        短信发送-->
+<!--        短信发送-->
         <dependency>
             <groupId>com.aliyun</groupId>
             <artifactId>aliyun-java-sdk-core</artifactId>

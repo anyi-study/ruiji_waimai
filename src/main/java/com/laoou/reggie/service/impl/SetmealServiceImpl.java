@@ -25,7 +25,6 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     /**
      * 新增套餐，同时需要保存套餐和菜品关联关系
-     *
      * @param setmealDto
      */
     @Override
@@ -45,7 +44,6 @@ public class SetmealServiceImpl extends ServiceImpl<SetmealMapper, Setmeal> impl
 
     /**
      * 删除套餐，并且删除关联关系
-     *
      * @param ids
      */
     @Override
