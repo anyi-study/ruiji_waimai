@@ -6,6 +6,7 @@ import com.laoou.reggie.common.R;
 import com.laoou.reggie.dto.DishDto;
 import com.laoou.reggie.entity.Category;
 import com.laoou.reggie.entity.Dish;
+import com.laoou.reggie.entity.DishFlavor;
 import com.laoou.reggie.service.CategoryService;
 import com.laoou.reggie.service.DishFlavorService;
 import com.laoou.reggie.service.DishService;
@@ -78,8 +79,10 @@ public class DishController {
             BeanUtils.copyProperties(item, dishDto);
             Long categoryId = item.getCategoryId();
             Category category = categoryService.getById(categoryId);
-            String categoryName = category.getName();
-            dishDto.setCategoryName(categoryName);
+            if (category != null) {
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
             return dishDto;
         }).collect(Collectors.toList());
         dishDtoPage.setRecords(list);
@@ -113,12 +116,28 @@ public class DishController {
     }
 
     @GetMapping("/list")
-    public R<List<Dish>> list(Dish dish) {
+    public R<List<DishDto>> list(Dish dish) {
         LambdaQueryWrapper<Dish> qw = new LambdaQueryWrapper<>();
         qw.eq(dish.getCategoryId() != null, Dish::getCategoryId, dish.getCategoryId());
         qw.eq(Dish::getStatus, 1);
         qw.orderByAsc(Dish::getSort).orderByDesc(Dish::getUpdateTime);
         List<Dish> list = dishService.list(qw);
-        return R.success(list);
+        List<DishDto> dishDtosList = list.stream().map((item) -> {
+            DishDto dishDto = new DishDto();
+            BeanUtils.copyProperties(item, dishDto);
+            Long categoryId = item.getCategoryId();
+            Category category = categoryService.getById(categoryId);
+            if (category != null) {
+                String categoryName = category.getName();
+                dishDto.setCategoryName(categoryName);
+            }
+            Long dishId = item.getId();
+            LambdaQueryWrapper<DishFlavor> lqw = new LambdaQueryWrapper<>();
+            lqw.eq(DishFlavor::getDishId, dishId);
+            List<DishFlavor> dishFlavorList = dishFlavorService.list(lqw);
+            dishDto.setFlavors(dishFlavorList);
+            return dishDto;
+        }).collect(Collectors.toList());
+        return R.success(dishDtosList);
     }
 }
