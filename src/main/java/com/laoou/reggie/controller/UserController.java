@@ -36,14 +36,15 @@ public class UserController {
     public R<String> sendMsg(@RequestBody User user, HttpSession session) {
 //        获取手机号
         String phone = user.getPhone();
+        System.out.println(phone);
         if (StringUtils.isNotEmpty(phone)) {
             //        生成随机验证码
             String code = ValidateCodeUtils.generateValidateCode(4).toString();
             log.info("code:{}", code);
 //            调用API
-            SMSUtils.sendMessage("瑞吉外卖短信平台学习", "SMS_283395504", phone, code);
+//            SMSUtils.sendMessage("瑞吉外卖短信平台学习", "SMS_462295578", phone, code);
 
-//            code保存session
+////            code保存session
             session.setAttribute(phone, code);
             return R.success("手机验证码发送成功");
         }
